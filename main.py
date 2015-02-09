@@ -1,4 +1,5 @@
 import os
+import urllib
 import bibtexparser
 from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
@@ -102,7 +103,7 @@ def createBibLink(entire, number):
         db = BibDatabase()
         db.entries = [entrie]
         writer = BibTexWriter()
-        path = "./bib/"
+        path = "/web/ubisec/bib/"
         if not os.path.exists(path):
             os.makedirs(path)
         name = path+str(number)+".bib"
@@ -118,6 +119,15 @@ def createBibLink(entire, number):
 
 
 if __name__ == "__main__":
+    try:
+        print "Downloading new main.bib files from Dropbox...."
+        url = "https://www.dropbox.com/s/yvp1sxrd8opxgit/main.bib?dl=0"
+        newurl = url.split("?")[0]
+        newurl += "?raw=1"
+        urllib.urlretrieve (newurl, "main.bib")
+    except Exception,e:
+        print "Cannot download new bibtex file from Dropbox UbiSeC sharing folder, check/update the above link."
+
     with open('main.bib') as bibtex_file:
         bibtex_str = bibtex_file.read()
     bib_database = bibtexparser.loads(bibtex_str)
@@ -131,10 +141,10 @@ if __name__ == "__main__":
     for res,[year,entrie_type,entrie,number] in md_data.iteritems():
         createBibLink(entrie,number)
 
-    if not os.path.exists('./info'):
-        os.makedirs('./info')
+    if not os.path.exists('/web/ubisec/info'):
+        os.makedirs('/web/ubisec/info')
 
-    with open('./info/publication.md','w') as markdown_file:
+    with open('/web/ubisec/info/publication.md','w') as markdown_file:
         md_string = ""
         for year in xrange(2015,2007,-1):
             md_string += print_year_template(year,md_data)
